@@ -5,6 +5,7 @@ from flask import (
     jsonify,
 )
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 
 from models import (
     setup_db,
@@ -37,6 +38,9 @@ def create_app(test_config=None):
 
         return response
 
+    #----------------------------------------------------------------------------#
+    # Controllers
+    #----------------------------------------------------------------------------#
 
     @app.route('/')
     def index():
@@ -59,6 +63,33 @@ def create_app(test_config=None):
             'calls': [c.format() for c in current_calls],
             'total_calls': len(calls)
         })
+
+    #----------------------------------------------------------------------------#
+    # Error Handlers
+    #----------------------------------------------------------------------------#
+
+    @app.errorhandler(HTTPException)
+    def http_exception_handler(error):
+        """
+        HTTP error handler for all endpoints.
+        """
+        return jsonify({
+            'success': False,
+            'error': error.code,
+            'message': error.description
+        }), error.code
+
+
+    @app.errorhandler(Exception)
+    def exception_handler(error):
+        """
+        Generic error handler for all endpoints.
+        """
+        return jsonify({
+            'success': False,
+            'error': 500,
+            'message': f'Something went wrong: {error}'
+        }), 500
 
 
     return app
