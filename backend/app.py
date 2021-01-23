@@ -13,6 +13,7 @@ from models import (
     Panelist,
     Topic,
 )
+from utils import paginate
 
 
 def create_app(test_config=None):
@@ -42,6 +43,21 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'message': "Welcome to Daedam!"
+        })
+
+
+    @app.route('/calls')
+    def retrieve_calls():
+        calls = Call.query.order_by(
+            Call.id.desc() # Latest first
+        ).all()
+
+        current_calls = paginate(request, calls)
+
+        return jsonify({
+            'success': True,
+            'calls': [c.format() for c in current_calls],
+            'total_calls': len(calls)
         })
 
 
