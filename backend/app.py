@@ -4,19 +4,22 @@ from flask import (
     abort,
     jsonify,
 )
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_cors import CORS
 
-# from models import (
-#     setup_db,
-# )
+from models import (
+    setup_db,
+    Call,
+    Offer,
+    Panelist,
+    Topic,
+)
 
 
 def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__)
-    # setup_db(app)
+    app.config.from_object('config')
+    setup_db(app)
     CORS(app)
 
 
