@@ -1,3 +1,4 @@
+import json
 from flask import (
     Flask,
     request,
@@ -62,7 +63,32 @@ def create_app(test_config=None):
             'success': True,
             'calls': [c.format() for c in current_calls],
             'total_calls': len(calls)
-        })
+        }), 200
+
+
+    @app.route('/calls', methods=['POST'])
+    def create_call():
+        body = request.get_json()
+        if not body:
+            abort(400, 'Request body is missing.')
+
+        c = Call(
+            question = body.get('question'),
+            description = json.dumps(body.get('description'))
+        )
+        if c.question is None:
+            abort(400, '`question` is required in the request body.')
+
+        try:
+            c.insert()
+            cid = c.id
+        except:
+            abort(422, 'Database insertion failed.')
+
+        return jsonify({
+            'success': True,
+            'message': f'<Call ID: {cid}> has been created successfully.'
+        }), 201
 
     #----------------------------------------------------------------------------#
     # Error Handlers
