@@ -13,7 +13,7 @@ from models import (
 )
 
 
-class TriviaTestCase(unittest.TestCase):
+class DaedamTestCase(unittest.TestCase):
     def setUp(self):
         """
         Define test variables and initialize app.
