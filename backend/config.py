@@ -1,11 +1,7 @@
 import os
 
-# App config
-DEBUG = True
+# Database connection
+DB_URI = os.environ.get('DB_URI', 'postgres://localhost:5432/daedam')
 
-# DB connection
-SQLALCHEMY_TRACK_MODIFICATIONS = False
-SQLALCHEMY_DATABASE_URI = os.environ.get('DB_URI', 'postgres://localhost:5432/daedam_test')
-
-# Other envars
+# Other config variables
 ENTRIES_PER_PAGE = int(os.environ.get('ENTRIES_PER_PAGE', '10'))

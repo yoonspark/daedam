@@ -2,15 +2,22 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
+from config import DB_URI
+
 
 db = SQLAlchemy()
 
 
-def setup_db(app):
-    """Bind a flask application and a SQLAlchemy service"""
+def setup_db(app, db_uri=DB_URI):
+    """
+    Bind a flask application and a SQLAlchemy service.
+    """
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    migrate = Migrate(app, db, compare_type=True)
+    db.create_all()
 
 
 # Create association tables

@@ -21,7 +21,6 @@ from utils import paginate
 def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__)
-    app.config.from_object('config')
     setup_db(app)
     CORS(app)
 
