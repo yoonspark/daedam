@@ -90,6 +90,23 @@ def create_app(test_config=None):
             'message': f'<Call ID: {cid}> has been created successfully.'
         }), 201
 
+
+    @app.route('/calls/<int:call_id>', methods=['DELETE'])
+    def delete_call(call_id):
+        c = Call.query.get(call_id)
+        if not c:
+            abort(404, f'<Call ID: {call_id}> does not exist already.')
+
+        try:
+            c.delete()
+        except:
+            abort(422, 'Deletion failed.')
+
+        return jsonify({
+            'success': True,
+            'message': f'<Call ID: {call_id}> has been deleted successfully.'
+        })
+
     #----------------------------------------------------------------------------#
     # Error Handlers
     #----------------------------------------------------------------------------#
