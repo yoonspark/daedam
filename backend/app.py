@@ -104,6 +104,28 @@ def create_app(test_config=None):
         }), 200
 
 
+    @app.route('/calls/<int:call_id>', methods=['PATCH'])
+    def update_call(call_id):
+        body = request.get_json()
+        if not body:
+            abort(400, 'Request body is missing.')
+        if body.get('question') is None:
+            abort(400, '`question` is required in the request body.')
+
+        c = Call.query.get(call_id)
+        if not c:
+            abort(404, f'<Call ID: {call_id}> does not exist.')
+
+        # Update the record
+        c.question = body.get('question')
+        c.description = body.get('description')
+
+        return jsonify({
+            'success': True,
+            'message': f'<Call ID: {call_id}> has been updated successfully.'
+        }), 200
+
+
     @app.route('/calls/<int:call_id>', methods=['DELETE'])
     def delete_call(call_id):
         c = Call.query.get(call_id)
