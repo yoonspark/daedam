@@ -91,6 +91,19 @@ def create_app(test_config=None):
         }), 201
 
 
+    @app.route('/calls/<int:call_id>')
+    def retrieve_call(call_id):
+        c = Call.query.get(call_id)
+        if not c:
+            abort(404, f'<Call ID: {call_id}> does not exist.')
+
+        return jsonify({
+            'success': True,
+            'calls': [c.format()],
+            'total_calls': 1
+        }), 200
+
+
     @app.route('/calls/<int:call_id>', methods=['DELETE'])
     def delete_call(call_id):
         c = Call.query.get(call_id)
