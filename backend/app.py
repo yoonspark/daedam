@@ -110,16 +110,20 @@ def create_app(test_config=None):
         body = request.get_json()
         if not body:
             abort(400, 'Request body is missing.')
-        if body.get('question') is None:
-            abort(400, '`question` is required in the request body.')
 
         c = Call.query.get(call_id)
         if not c:
             abort(404, f'<Call ID: {call_id}> does not exist.')
 
         # Update the record
-        c.question = body.get('question')
-        c.description = body.get('description')
+        if body.get('question'):
+            c.question = body.get('question')
+        if body.get('description'):
+            c.description = body.get('description')
+        try:
+            c.update()
+        except:
+            abort(422, 'Database error: Update failed.')
 
         return jsonify({
             'success': True,
