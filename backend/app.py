@@ -79,7 +79,6 @@ def create_app(test_config=None):
             question = body.get('question'),
             description = body.get('description')
         )
-
         try:
             c.insert()
             call_id = c.id
@@ -156,6 +155,7 @@ def create_app(test_config=None):
         """
         HTTP error handler for all endpoints.
         """
+
         return jsonify({
             'success': False,
             'error': error.code,
@@ -168,6 +168,7 @@ def create_app(test_config=None):
         """
         Generic error handler for all endpoints.
         """
+
         return jsonify({
             'success': False,
             'error': 500,
