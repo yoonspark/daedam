@@ -15,7 +15,10 @@ from models import (
     Panelist,
     Topic,
 )
-from utils import paginate
+from utils import (
+    paginate,
+    get_topic,
+)
 
 
 def create_app(test_config=None):
@@ -76,7 +79,8 @@ def create_app(test_config=None):
         # Create a new record
         c = Call(
             question = body.get('question'),
-            description = body.get('description')
+            description = body.get('description', ''),
+            topics = [get_topic(name=t) for t in body.get('topics', [])]
         )
         try:
             c.insert()
