@@ -71,13 +71,14 @@ def create_app(test_config=None):
         body = request.get_json()
         if not body:
             abort(400, 'Request body is missing.')
+        if body.get('question') is None:
+            abort(400, '`question` is required in the request body.')
 
+        # Create a new record
         c = Call(
             question = body.get('question'),
-            description = json.dumps(body.get('description'))
+            description = body.get('description')
         )
-        if c.question is None:
-            abort(400, '`question` is required in the request body.')
 
         try:
             c.insert()
