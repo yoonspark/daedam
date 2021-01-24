@@ -118,7 +118,7 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'message': f'<Call ID: {call_id}> has been deleted successfully.'
-        })
+        }), 200
 
     #----------------------------------------------------------------------------#
     # Error Handlers
