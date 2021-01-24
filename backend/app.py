@@ -81,13 +81,13 @@ def create_app(test_config=None):
 
         try:
             c.insert()
-            cid = c.id
+            call_id = c.id
         except:
-            abort(422, 'Database insertion failed.')
+            abort(422, 'Database error: Insertion failed.')
 
         return jsonify({
             'success': True,
-            'message': f'<Call ID: {cid}> has been created successfully.'
+            'message': f'<Call ID: {call_id}> has been created successfully.'
         }), 201
 
 
@@ -100,7 +100,7 @@ def create_app(test_config=None):
         try:
             c.delete()
         except:
-            abort(422, 'Deletion failed.')
+            abort(422, 'Database error: Deletion failed.')
 
         return jsonify({
             'success': True,
