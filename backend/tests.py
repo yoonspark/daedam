@@ -35,6 +35,8 @@ class TriviaTestCase(unittest.TestCase):
         """
         pass
 
+    # --- RETRIEVE ALL CALLS --- #
+
     def test_retrieve_calls(self):
         res = self.client().get('/calls')
         data = json.loads(res.data)
@@ -43,6 +45,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertIsInstance(data['calls'], list)
         self.assertIsInstance(data['total_calls'], int)
+
+    def test_retrieve_calls_beyond_valid_page(self):
+        res = self.client().get('/calls?page=99999')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertIsInstance(data['calls'], list)
+        self.assertEqual(data['total_calls'], 0)
 
 
 # Make the tests conveniently executable
