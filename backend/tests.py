@@ -29,6 +29,12 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             self.db.create_all()
 
+        self.new_call = {
+            'question': 'Does the universe have an end?',
+            'description': 'I want a blend of diverse perspectives including those from philosophy, science, and religion.',
+            'topics': ['philosophy', 'science', 'religion']
+        }
+
     def tearDown(self):
         """
         Executed after reach test.
@@ -54,6 +60,16 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertIsInstance(data['calls'], list)
         self.assertEqual(data['total_calls'], 0)
+
+    # --- ADD NEW CALL --- #
+
+    def test_add_call(self):
+        res = self.client().post('/calls', json=self.new_call)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['message'])
 
 
 # Make the tests conveniently executable
