@@ -74,7 +74,8 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Call record has been created successfully.')
         self.assertIsInstance(data['id'], int)
 
-        _ = self.client().delete(f'/calls/{data["id"]}') # For reproducibility of DB
+        # For reproducibility of DB, delete the created record
+        _ = self.client().delete(f'/calls/{data["id"]}')
 
     def test_add_call_no_body(self):
         res = self.client().post('/calls')
@@ -101,11 +102,13 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Call record has been created successfully.')
         self.assertIsInstance(data['id'], int)
 
-        _ = self.client().delete(f'/calls/{data["id"]}') # For reproducibility of DB
+        # For reproducibility of DB, delete the created record
+        _ = self.client().delete(f'/calls/{data["id"]}')
 
     # --- DELETE CALL --- #
 
     def test_delete_call(self):
+        # Create a test record
         res = self.client().post('/calls', json=self.new_call)
         data = json.loads(res.data)
         call_id = data["id"]
@@ -120,6 +123,42 @@ class DaedamTestCase(unittest.TestCase):
 
     def test_delete_call_not_exist(self):
         res = self.client().delete(f'/calls/99999')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Call record does not exist.')
+
+    # --- UPDATE CALL --- #
+
+    def test_update_call_question_only(self):
+        res = self.client().patch(f'/calls/1', json=self.new_call_question_only)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['message'], 'Call record has been updated successfully.')
+        self.assertEqual(data['id'], 1)
+
+    def test_update_call_no_question(self):
+        res = self.client().patch(f'/calls/1', json=self.new_call_no_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['message'], 'Call record has been updated successfully.')
+        self.assertEqual(data['id'], 1)
+
+    def test_update_call_no_body(self):
+        res = self.client().patch(f'/calls/1')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Request body is missing.')
+
+    def test_update_call_not_exist(self):
+        res = self.client().patch(f'/calls/99999', json=self.new_call_question_only)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
