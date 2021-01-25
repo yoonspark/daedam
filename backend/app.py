@@ -139,7 +139,7 @@ def create_app(test_config=None):
     def delete_call(call_id):
         c = Call.query.get(call_id)
         if not c:
-            abort(404, 'Call record does not exist already.')
+            abort(404, 'Call record does not exist.')
 
         try:
             c.delete()
