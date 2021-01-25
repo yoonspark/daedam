@@ -72,6 +72,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['message'], 'Call record has been created successfully.')
+        self.assertIsInstance(data['id'], int)
 
         _ = self.client().delete(f'/calls/{data["id"]}') # For reproducibility of DB
 
@@ -98,8 +99,33 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
         self.assertEqual(data['message'], 'Call record has been created successfully.')
+        self.assertIsInstance(data['id'], int)
 
         _ = self.client().delete(f'/calls/{data["id"]}') # For reproducibility of DB
+
+    # --- DELETE CALL --- #
+
+    def test_delete_call(self):
+        res = self.client().post('/calls', json=self.new_call)
+        data = json.loads(res.data)
+        call_id = data["id"]
+
+        res = self.client().delete(f'/calls/{call_id}')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['message'], 'Call record has been deleted successfully.')
+        self.assertEqual(data['id'], call_id)
+
+    def test_delete_call_not_exist(self):
+        res = self.client().delete(f'/calls/99999')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Call record does not exist.')
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
