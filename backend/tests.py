@@ -15,10 +15,7 @@ from models import (
 
 class DaedamTestCase(unittest.TestCase):
     def setUp(self):
-        """
-        Define test variables and initialize app.
-        """
-
+        # Initialize app
         self.app = create_app()
         self.client = self.app.test_client
         setup_db(self.app, 'postgres://localhost:5432/daedam_test')
@@ -29,16 +26,21 @@ class DaedamTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             self.db.create_all()
 
+        # Make test variables
         self.new_call = {
             'question': 'Does the universe have an end?',
             'description': 'I want a blend of diverse perspectives including those from philosophy, science, and religion.',
             'topics': ['philosophy', 'science', 'religion']
         }
+        self.new_call_question_only = {
+            'question': 'Do we live in a simulation?',
+        }
+        self.new_call_no_question = {
+            'description': 'I want various scientific perspectives.',
+            'topics': ['physics', 'chemistry', 'biology']
+        }
 
     def tearDown(self):
-        """
-        Executed after reach test.
-        """
         pass
 
     # --- RETRIEVE ALL CALLS --- #
@@ -61,7 +63,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertIsInstance(data['calls'], list)
         self.assertEqual(len(data['calls']), 0)
 
-    # --- ADD NEW CALL --- #
+    # --- CREATE NEW CALL --- #
 
     def test_add_call(self):
         res = self.client().post('/calls', json=self.new_call)
@@ -69,10 +71,35 @@ class DaedamTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data['message'])
+        self.assertEqual(data['message'], 'Call record has been created successfully.')
 
         _ = self.client().delete(f'/calls/{data["id"]}') # For reproducibility of DB
 
+    def test_add_call_no_body(self):
+        res = self.client().post('/calls')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Request body is missing.')
+
+    def test_add_call_no_question(self):
+        res = self.client().post('/calls', json=self.new_call_no_question)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], '"question" is required in the request body.')
+
+    def test_add_call_question_only(self):
+        res = self.client().post('/calls', json=self.new_call_question_only)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['message'], 'Call record has been created successfully.')
+
+        _ = self.client().delete(f'/calls/{data["id"]}') # For reproducibility of DB
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
