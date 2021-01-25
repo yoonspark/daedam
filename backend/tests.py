@@ -129,6 +129,25 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Call record does not exist.')
 
+    # --- RETRIEVE SINGLE CALL --- #
+
+    def test_retrieve_call(self):
+        res = self.client().get('/calls/1')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertIsInstance(data['calls'], list)
+        self.assertEqual(data['total_calls'], 1)
+
+    def test_retrieve_call_not_exist(self):
+        res = self.client().get('/calls/99999')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Call record does not exist.')
+
     # --- UPDATE CALL --- #
 
     def test_update_call_question_only(self):
