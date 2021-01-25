@@ -71,6 +71,8 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertTrue(data['message'])
 
+        _ = self.client().delete(f'/calls/{data["id"]}') # For reproducibility of DB
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
