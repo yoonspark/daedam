@@ -65,7 +65,7 @@ class DaedamTestCase(unittest.TestCase):
 
     # --- CREATE NEW CALL --- #
 
-    def test_add_call(self):
+    def test_create_call(self):
         res = self.client().post('/calls', json=self.new_call)
         data = json.loads(res.data)
 
@@ -77,7 +77,7 @@ class DaedamTestCase(unittest.TestCase):
         # For reproducibility of DB, delete the created record
         _ = self.client().delete(f'/calls/{data["id"]}')
 
-    def test_add_call_no_body(self):
+    def test_create_call_no_body(self):
         res = self.client().post('/calls')
         data = json.loads(res.data)
 
@@ -85,7 +85,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Request body is missing.')
 
-    def test_add_call_no_question(self):
+    def test_create_call_no_question(self):
         res = self.client().post('/calls', json=self.new_call_no_question)
         data = json.loads(res.data)
 
@@ -93,7 +93,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], '"question" is required in the request body.')
 
-    def test_add_call_question_only(self):
+    def test_create_call_question_only(self):
         res = self.client().post('/calls', json=self.new_call_question_only)
         data = json.loads(res.data)
 
