@@ -74,7 +74,7 @@ def create_app(test_config=None):
         if not body:
             abort(400, 'Request body is missing.')
         if body.get('question') is None:
-            abort(400, '`question` is required in the request body.')
+            abort(400, '"question" is required in the request body.')
 
         # Create a new record
         c = Call(
