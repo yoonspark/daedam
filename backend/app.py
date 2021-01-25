@@ -90,7 +90,8 @@ def create_app(test_config=None):
 
         return jsonify({
             'success': True,
-            'message': f'<Call ID: {call_id}> has been created successfully.'
+            'message': 'Call record has been created successfully.',
+            'id': call_id
         }), 201
 
 
@@ -98,7 +99,7 @@ def create_app(test_config=None):
     def retrieve_call(call_id):
         c = Call.query.get(call_id)
         if not c:
-            abort(404, f'<Call ID: {call_id}> does not exist.')
+            abort(404, 'Call record does not exist.')
 
         return jsonify({
             'success': True,
@@ -115,7 +116,7 @@ def create_app(test_config=None):
 
         c = Call.query.get(call_id)
         if not c:
-            abort(404, f'<Call ID: {call_id}> does not exist.')
+            abort(404, 'Call record does not exist.')
 
         # Update the record
         if body.get('question'):
@@ -129,7 +130,8 @@ def create_app(test_config=None):
 
         return jsonify({
             'success': True,
-            'message': f'<Call ID: {call_id}> has been updated successfully.'
+            'message': 'Call record has been updated successfully.',
+            'id': call_id
         }), 200
 
 
@@ -137,7 +139,7 @@ def create_app(test_config=None):
     def delete_call(call_id):
         c = Call.query.get(call_id)
         if not c:
-            abort(404, f'<Call ID: {call_id}> does not exist already.')
+            abort(404, 'Call record does not exist already.')
 
         try:
             c.delete()
@@ -146,7 +148,8 @@ def create_app(test_config=None):
 
         return jsonify({
             'success': True,
-            'message': f'<Call ID: {call_id}> has been deleted successfully.'
+            'message': 'Call record has been deleted successfully.',
+            'id': call_id
         }), 200
 
     #----------------------------------------------------------------------------#
