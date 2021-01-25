@@ -123,6 +123,8 @@ def create_app(test_config=None):
             c.question = body.get('question')
         if body.get('description'):
             c.description = body.get('description')
+        if body.get('topics'):
+            c.topics = [get_topic(name=t) for t in body.get('topics')]
         try:
             c.update()
         except:
