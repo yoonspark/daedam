@@ -122,7 +122,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['id'], call_id)
 
     def test_delete_call_not_exist(self):
-        res = self.client().delete(f'/calls/99999')
+        res = self.client().delete('/calls/99999')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -151,7 +151,7 @@ class DaedamTestCase(unittest.TestCase):
     # --- UPDATE CALL --- #
 
     def test_update_call_question_only(self):
-        res = self.client().patch(f'/calls/1', json=self.new_call_question_only)
+        res = self.client().patch('/calls/1', json=self.new_call_question_only)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -160,7 +160,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['id'], 1)
 
     def test_update_call_no_question(self):
-        res = self.client().patch(f'/calls/1', json=self.new_call_no_question)
+        res = self.client().patch('/calls/1', json=self.new_call_no_question)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -169,7 +169,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['id'], 1)
 
     def test_update_call_no_body(self):
-        res = self.client().patch(f'/calls/1')
+        res = self.client().patch('/calls/1')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
@@ -177,7 +177,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Request body is missing.')
 
     def test_update_call_not_exist(self):
-        res = self.client().patch(f'/calls/99999', json=self.new_call_question_only)
+        res = self.client().patch('/calls/99999', json=self.new_call_question_only)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
