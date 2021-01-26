@@ -1,3 +1,4 @@
-# Daedam
+# Daedam Backend
 
-Daedam is a platform that helps the public initiate and organize intellectual discussions that address their questions in life.
+## API Reference
+Documentation of supported endpoints and their details can be found [here](https://github.com/yoonspark/daedam/blob/master/backend/apidoc.md).
