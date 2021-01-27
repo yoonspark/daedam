@@ -11,6 +11,11 @@ from models import (
     Panelist,
     Topic,
 )
+from config import (
+    JWT_AUDIENCE,
+    JWT_MODERATOR,
+    JWT_ADMIN,
+)
 
 
 class DaedamTestCase(unittest.TestCase):
@@ -26,7 +31,21 @@ class DaedamTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             self.db.create_all()
 
-        # Make test variables
+        # Make test headers
+        self.headers_audience = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {JWT_AUDIENCE}'
+        }
+        self.headers_moderator = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {JWT_MODERATOR}'
+        }
+        self.headers_admin = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {JWT_ADMIN}'
+        }
+
+        # Make test data
         self.new_call = {
             'question': 'Does the universe have an end?',
             'description': 'I want a blend of diverse perspectives including those from philosophy, science, and religion.',
@@ -46,7 +65,7 @@ class DaedamTestCase(unittest.TestCase):
     # --- RETRIEVE ALL CALLS --- #
 
     def test_retrieve_calls(self):
-        res = self.client().get('/calls')
+        res = self.client().get('/calls', headers=self.headers_audience)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -55,7 +74,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertIsInstance(data['total_calls'], int)
 
     def test_retrieve_calls_beyond_valid_page(self):
-        res = self.client().get('/calls?page=99999')
+        res = self.client().get('/calls?page=99999', headers=self.headers_audience)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -66,7 +85,7 @@ class DaedamTestCase(unittest.TestCase):
     # --- CREATE NEW CALL --- #
 
     def test_create_call(self):
-        res = self.client().post('/calls', json=self.new_call)
+        res = self.client().post('/calls', headers=self.headers_audience, json=self.new_call)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 201)
@@ -75,10 +94,10 @@ class DaedamTestCase(unittest.TestCase):
         self.assertIsInstance(data['id'], int)
 
         # For reproducibility of DB, delete the created record
-        _ = self.client().delete(f'/calls/{data["id"]}')
+        _ = self.client().delete(f'/calls/{data["id"]}', headers=self.headers_audience)
 
     def test_create_call_no_body(self):
-        res = self.client().post('/calls')
+        res = self.client().post('/calls', headers=self.headers_audience)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
@@ -86,7 +105,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Request body is missing.')
 
     def test_create_call_no_question(self):
-        res = self.client().post('/calls', json=self.new_call_no_question)
+        res = self.client().post('/calls', headers=self.headers_audience, json=self.new_call_no_question)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
@@ -94,7 +113,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['message'], '"question" is required in the request body.')
 
     def test_create_call_question_only(self):
-        res = self.client().post('/calls', json=self.new_call_question_only)
+        res = self.client().post('/calls', headers=self.headers_audience, json=self.new_call_question_only)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 201)
@@ -103,17 +122,17 @@ class DaedamTestCase(unittest.TestCase):
         self.assertIsInstance(data['id'], int)
 
         # For reproducibility of DB, delete the created record
-        _ = self.client().delete(f'/calls/{data["id"]}')
+        _ = self.client().delete(f'/calls/{data["id"]}', headers=self.headers_audience)
 
     # --- DELETE CALL --- #
 
     def test_delete_call(self):
         # Create a test record
-        res = self.client().post('/calls', json=self.new_call)
+        res = self.client().post('/calls', headers=self.headers_audience, json=self.new_call)
         data = json.loads(res.data)
         call_id = data["id"]
 
-        res = self.client().delete(f'/calls/{call_id}')
+        res = self.client().delete(f'/calls/{call_id}', headers=self.headers_audience)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -122,7 +141,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['id'], call_id)
 
     def test_delete_call_not_exist(self):
-        res = self.client().delete('/calls/99999')
+        res = self.client().delete('/calls/99999', headers=self.headers_audience)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -132,7 +151,7 @@ class DaedamTestCase(unittest.TestCase):
     # --- RETRIEVE SINGLE CALL --- #
 
     def test_retrieve_call(self):
-        res = self.client().get('/calls/1')
+        res = self.client().get('/calls/1', headers=self.headers_audience)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -141,7 +160,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['total_calls'], 1)
 
     def test_retrieve_call_not_exist(self):
-        res = self.client().get('/calls/99999')
+        res = self.client().get('/calls/99999', headers=self.headers_audience)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -151,7 +170,7 @@ class DaedamTestCase(unittest.TestCase):
     # --- UPDATE CALL --- #
 
     def test_update_call_question_only(self):
-        res = self.client().patch('/calls/1', json=self.new_call_question_only)
+        res = self.client().patch('/calls/1', headers=self.headers_audience, json=self.new_call_question_only)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -160,7 +179,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['id'], 1)
 
     def test_update_call_no_question(self):
-        res = self.client().patch('/calls/1', json=self.new_call_no_question)
+        res = self.client().patch('/calls/1', headers=self.headers_audience, json=self.new_call_no_question)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -169,7 +188,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['id'], 1)
 
     def test_update_call_no_body(self):
-        res = self.client().patch('/calls/1')
+        res = self.client().patch('/calls/1', headers=self.headers_audience)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
@@ -177,7 +196,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Request body is missing.')
 
     def test_update_call_not_exist(self):
-        res = self.client().patch('/calls/99999', json=self.new_call_question_only)
+        res = self.client().patch('/calls/99999', headers=self.headers_audience, json=self.new_call_question_only)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
