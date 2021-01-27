@@ -1,7 +1,7 @@
 import os
 
 # Database connection
-DB_URI = os.environ.get('DB_URI', 'postgres://localhost:5432/daedam')
+DATABASE_URL = os.environ.get('DATABASE_URL', 'postgres://localhost:5432/daedam')
 
 # Authorization config
 AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN', 'yoonspark.us.auth0.com')

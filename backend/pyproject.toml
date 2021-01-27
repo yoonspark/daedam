@@ -1,19 +1,19 @@
 [tool.poetry]
-name = "yoon-daedam"
+name = "daedam"
 version = "0.1.0"
-description = "Platform to Let the Public Initiate Intellectual Discussions"
+description = "Web Platform to Help the Audience Initiate and Organize Public Intellectual Discussions"
 authors = ["Sangyoon Park <datumvitae@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.7"
 flask = "^1.1.2"
+flask-cors = "^3.0.10"
 flask-sqlalchemy = "^2.4.4"
 flask-migrate = "^2.6.0"
-flask-cors = "^3.0.10"
-psycopg2-binary = "^2.8.6"
 flask-script = "^2.0.6"
-werkzeug = "^1.0.1"
+psycopg2-binary = "^2.8.6"
 python-jose-cryptodome = "^1.3.2"
+gunicorn = "^20.0.4"
 
 [tool.poetry.dev-dependencies]
 

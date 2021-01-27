@@ -2,18 +2,18 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-from config import DB_URI
+from config import DATABASE_URL
 
 
 db = SQLAlchemy()
 
 
-def setup_db(app, db_uri=DB_URI):
+def setup_db(app, db_url=DATABASE_URL):
     """
     Bind a flask application and a SQLAlchemy service.
     """
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
