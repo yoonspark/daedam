@@ -82,6 +82,14 @@ class DaedamTestCase(unittest.TestCase):
         self.assertIsInstance(data['calls'], list)
         self.assertEqual(len(data['calls']), 0)
 
+    def test_retrieve_calls_no_headers(self):
+        res = self.client().get('/calls')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Authorization header is expected.')
+
     # --- CREATE NEW CALL --- #
 
     def test_create_call(self):
@@ -124,6 +132,22 @@ class DaedamTestCase(unittest.TestCase):
         # For reproducibility of DB, delete the created record
         _ = self.client().delete(f'/calls/{data["id"]}', headers=self.headers_audience)
 
+    def test_create_call_no_headers(self):
+        res = self.client().post('/calls', json=self.new_call)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Authorization header is expected.')
+
+    def test_create_call_wrong_permission(self):
+        res = self.client().post('/calls', headers=self.headers_moderator, json=self.new_call)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Permission not found.')
+
     # --- DELETE CALL --- #
 
     def test_delete_call(self):
@@ -148,6 +172,22 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Call record does not exist.')
 
+    def test_delete_call_no_headers(self):
+        res = self.client().delete('/calls/3')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Authorization header is expected.')
+
+    def test_delete_call_wrong_permission(self):
+        res = self.client().delete('/calls/3', headers=self.headers_moderator)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Permission not found.')
+
     # --- RETRIEVE SINGLE CALL --- #
 
     def test_retrieve_call(self):
@@ -166,6 +206,14 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Call record does not exist.')
+
+    def test_retrieve_call_no_headers(self):
+        res = self.client().get('/calls/1')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Authorization header is expected.')
 
     # --- UPDATE CALL --- #
 
@@ -202,6 +250,22 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Call record does not exist.')
+
+    def test_update_call_no_headers(self):
+        res = self.client().patch('/calls/1', json=self.new_call_question_only)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Authorization header is expected.')
+
+    def test_update_call_wrong_permission(self):
+        res = self.client().patch('/calls/1', headers=self.headers_moderator, json=self.new_call_question_only)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Permission not found.')
 
 
 # Make the tests conveniently executable
