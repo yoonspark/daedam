@@ -19,6 +19,7 @@ from utils import (
     paginate,
     get_topic,
 )
+from auth import AuthError, requires_auth
 
 
 def create_app(test_config=None):
@@ -54,7 +55,8 @@ def create_app(test_config=None):
 
 
     @app.route('/calls')
-    def retrieve_calls():
+    @requires_auth('read:calls')
+    def retrieve_calls(payload):
         calls = Call.query.order_by(
             Call.id.desc() # Latest first
         ).all()
@@ -69,7 +71,8 @@ def create_app(test_config=None):
 
 
     @app.route('/calls', methods=['POST'])
-    def create_call():
+    @requires_auth('create:calls')
+    def create_call(payload):
         body = request.get_json()
         if not body:
             abort(400, 'Request body is missing.')
@@ -96,7 +99,8 @@ def create_app(test_config=None):
 
 
     @app.route('/calls/<int:call_id>')
-    def retrieve_call(call_id):
+    @requires_auth('read:calls')
+    def retrieve_call(payload, call_id):
         c = Call.query.get(call_id)
         if not c:
             abort(404, 'Call record does not exist.')
@@ -109,7 +113,8 @@ def create_app(test_config=None):
 
 
     @app.route('/calls/<int:call_id>', methods=['PATCH'])
-    def update_call(call_id):
+    @requires_auth('update:calls')
+    def update_call(payload, call_id):
         body = request.get_json()
         if not body:
             abort(400, 'Request body is missing.')
@@ -138,7 +143,8 @@ def create_app(test_config=None):
 
 
     @app.route('/calls/<int:call_id>', methods=['DELETE'])
-    def delete_call(call_id):
+    @requires_auth('delete:calls')
+    def delete_call(payload, call_id):
         c = Call.query.get(call_id)
         if not c:
             abort(404, 'Call record does not exist.')
@@ -169,6 +175,15 @@ def create_app(test_config=None):
             'error': error.code,
             'message': error.description
         }), error.code
+
+
+    @app.errorhandler(AuthError)
+    def auth_error(error):
+        return jsonify({
+            "success": False,
+            "error": error.status_code,
+            "message": error.error['description']
+        }), error.status_code
 
 
     @app.errorhandler(Exception)
