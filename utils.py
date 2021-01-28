@@ -1,6 +1,6 @@
 from config import ENTRIES_PER_PAGE
 
-from models import Topic
+from models import Topic, Panelist
 
 
 def paginate(request, entries: list) -> list:
@@ -18,3 +18,11 @@ def get_topic(name: str):
         t = Topic(name=name)
 
     return t
+
+
+def get_panelist(name: str):
+    p = Panelist.query.filter(Panelist.name == name).first()
+    if not p:
+        p = Panelist(name=name)
+
+    return p

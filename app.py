@@ -18,6 +18,7 @@ from models import (
 from utils import (
     paginate,
     get_topic,
+    get_panelist,
 )
 from auth import AuthError, requires_auth
 
@@ -53,6 +54,8 @@ def create_app(test_config=None):
             'message': "Welcome to Daedam!"
         })
 
+    #  Calls
+    #  ----------------------------------------------------------------
 
     @app.route('/calls')
     @requires_auth('read:calls')
@@ -158,6 +161,124 @@ def create_app(test_config=None):
             'success': True,
             'message': 'Call record has been deleted successfully.',
             'id': call_id
+        }), 200
+
+    #  Offers
+    #  ----------------------------------------------------------------
+
+    @app.route('/offers')
+    @requires_auth('read:offers')
+    def retrieve_offers(payload):
+        offers = Offer.query.order_by(
+            Offer.id.desc() # Latest first
+        ).all()
+
+        current_offers = paginate(request, offers)
+
+        return jsonify({
+            'success': True,
+            'offers': [o.format() for o in current_offers],
+            'total_offers': len(offers)
+        }), 200
+
+
+    @app.route('/offers', methods=['POST'])
+    @requires_auth('create:offers')
+    def create_offer(payload):
+        body = request.get_json()
+        if not body:
+            abort(400, 'Request body is missing.')
+        if body.get('title') is None:
+            abort(400, '"title" is required in the request body.')
+
+        # Create a new record
+        o = Offer(
+            title = body.get('title'),
+            contents = body.get('contents', ''),
+            event_time = body.get('event_time'), # Null if not found
+            finalized = body.get('finalized', False),
+            topics = [get_topic(name=t) for t in body.get('topics', [])],
+            panelists = [get_panelist(name=p) for p in body.get('panelists', [])]
+        )
+        try:
+            o.insert()
+            offer_id = o.id
+        except:
+            abort(422, 'Database error: Insertion failed.')
+
+        return jsonify({
+            'success': True,
+            'message': 'Offer record has been created successfully.',
+            'id': offer_id
+        }), 201
+
+
+    @app.route('/offers/<int:offer_id>')
+    @requires_auth('read:offers')
+    def retrieve_offer(payload, offer_id):
+        o = Offer.query.get(offer_id)
+        if not o:
+            abort(404, 'Offer record does not exist.')
+
+        return jsonify({
+            'success': True,
+            'offers': [o.format()],
+            'total_offers': 1
+        }), 200
+
+
+    @app.route('/offers/<int:offer_id>', methods=['PATCH'])
+    @requires_auth('update:offers')
+    def update_offer(payload, offer_id):
+        body = request.get_json()
+        if not body:
+            abort(400, 'Request body is missing.')
+
+        o = Offer.query.get(offer_id)
+        if not o:
+            abort(404, 'Offer record does not exist.')
+
+        # Update the record
+        if body.get('title'):
+            o.title = body.get('title')
+        if body.get('contents'):
+            o.contents = body.get('contents')
+        if body.get('event_time'):
+            o.event_time = body.get('event_time')
+        if body.get('finalized'):
+            o.finalized = body.get('finalized')
+        if body.get('topics'):
+            o.topics = [get_topic(name=t) for t in body.get('topics')]
+        if body.get('panelists'):
+            o.panelists = [get_panelist(name=p) for p in body.get('panelists')]
+        try:
+            o.update()
+        except:
+            abort(422, 'Database error: Update failed.')
+
+        return jsonify({
+            'success': True,
+            'message': 'Offer record has been updated successfully.',
+            'id': offer_id
+        }), 200
+
+
+    @app.route('/offers/<int:offer_id>', methods=['DELETE'])
+    @requires_auth('delete:offers')
+    def delete_offer(payload, offer_id):
+        o = Offer.query.get(offer_id)
+        if not o:
+            abort(404, 'Offer record does not exist.')
+
+        try:
+            o.delete()
+        except:
+            abort(422, 'Database error: Deletion failed.')
+
+        return jsonify({
+            'success': True,
+            'message': 'Offer record has been deleted successfully.',
+            'id': offer_id
         }), 200
 
     #----------------------------------------------------------------------------#
