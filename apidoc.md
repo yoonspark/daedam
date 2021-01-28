@@ -19,7 +19,8 @@ If no page is specified, `page=1` is assigned by default.
 
 - *Example:*
 ```
-$ curl "http://127.0.0.1:5000/calls?page=1"
+$ curl "https://daedam.herokuapp.com/calls?page=1" \
+    -H "Authorization: Bearer $JWT_AUDIENCE"
 ```
 
 ### RESPONSE
