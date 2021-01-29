@@ -29,7 +29,6 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app)
 
-
     @app.after_request
     def after_request(response):
         response.headers.add(
@@ -43,9 +42,9 @@ def create_app(test_config=None):
 
         return response
 
-    #----------------------------------------------------------------------------#
+    # -------------------------------------------------------- #
     # Controllers
-    #----------------------------------------------------------------------------#
+    # -------------------------------------------------------- #
 
     @app.route('/')
     def index():
@@ -55,13 +54,13 @@ def create_app(test_config=None):
         })
 
     #  Calls
-    #  ----------------------------------------------------------------
+    #  ---------------------------------------------
 
     @app.route('/calls')
     @requires_auth('read:calls')
     def retrieve_calls(payload):
         calls = Call.query.order_by(
-            Call.id.desc() # Latest first
+            Call.id.desc()  # Latest first
         ).all()
 
         current_calls = paginate(request, calls)
@@ -71,7 +70,6 @@ def create_app(test_config=None):
             'calls': [c.format() for c in current_calls],
             'total_calls': len(calls)
         }), 200
-
 
     @app.route('/calls', methods=['POST'])
     @requires_auth('create:calls')
@@ -84,14 +82,14 @@ def create_app(test_config=None):
 
         # Create a new record
         c = Call(
-            question = body.get('question'),
-            description = body.get('description', ''),
-            topics = [get_topic(name=t) for t in body.get('topics', [])]
+            question=body.get('question'),
+            description=body.get('description', ''),
+            topics=[get_topic(name=t) for t in body.get('topics', [])]
         )
         try:
             c.insert()
             call_id = c.id
-        except:
+        except Exception:
             abort(422, 'Database error: Insertion failed.')
 
         return jsonify({
@@ -99,7 +97,6 @@ def create_app(test_config=None):
             'message': 'Call record has been created successfully.',
             'id': call_id
         }), 201
-
 
     @app.route('/calls/<int:call_id>')
     @requires_auth('read:calls')
@@ -113,7 +110,6 @@ def create_app(test_config=None):
             'calls': [c.format()],
             'total_calls': 1
         }), 200
-
 
     @app.route('/calls/<int:call_id>', methods=['PATCH'])
     @requires_auth('update:calls')
@@ -135,7 +131,7 @@ def create_app(test_config=None):
             c.topics = [get_topic(name=t) for t in body.get('topics')]
         try:
             c.update()
-        except:
+        except Exception:
             abort(422, 'Database error: Update failed.')
 
         return jsonify({
@@ -143,7 +139,6 @@ def create_app(test_config=None):
             'message': 'Call record has been updated successfully.',
             'id': call_id
         }), 200
-
 
     @app.route('/calls/<int:call_id>', methods=['DELETE'])
     @requires_auth('delete:calls')
@@ -154,7 +149,7 @@ def create_app(test_config=None):
 
         try:
             c.delete()
-        except:
+        except Exception:
             abort(422, 'Database error: Deletion failed.')
 
         return jsonify({
@@ -164,13 +159,13 @@ def create_app(test_config=None):
         }), 200
 
     #  Offers
-    #  ----------------------------------------------------------------
+    #  ---------------------------------------------
 
     @app.route('/offers')
     @requires_auth('read:offers')
     def retrieve_offers(payload):
         offers = Offer.query.order_by(
-            Offer.id.desc() # Latest first
+            Offer.id.desc()  # Latest first
         ).all()
 
         current_offers = paginate(request, offers)
@@ -180,7 +175,6 @@ def create_app(test_config=None):
             'offers': [o.format() for o in current_offers],
             'total_offers': len(offers)
         }), 200
-
 
     @app.route('/offers', methods=['POST'])
     @requires_auth('create:offers')
@@ -193,17 +187,19 @@ def create_app(test_config=None):
 
         # Create a new record
         o = Offer(
-            title = body.get('title'),
-            contents = body.get('contents', ''),
-            event_time = body.get('event_time'), # Null if not found
-            finalized = body.get('finalized', False),
-            topics = [get_topic(name=t) for t in body.get('topics', [])],
-            panelists = [get_panelist(name=p) for p in body.get('panelists', [])]
+            title=body.get('title'),
+            contents=body.get('contents', ''),
+            event_time=body.get('event_time'),  # Null if not found
+            finalized=body.get('finalized', False),
+            topics=[get_topic(name=t) for t in body.get('topics', [])],
+            panelists=[
+                get_panelist(name=p) for p in body.get('panelists', [])
+            ]
         )
         try:
             o.insert()
             offer_id = o.id
-        except:
+        except Exception:
             abort(422, 'Database error: Insertion failed.')
 
         return jsonify({
@@ -211,7 +207,6 @@ def create_app(test_config=None):
             'message': 'Offer record has been created successfully.',
             'id': offer_id
         }), 201
-
 
     @app.route('/offers/<int:offer_id>')
     @requires_auth('read:offers')
@@ -225,7 +220,6 @@ def create_app(test_config=None):
             'offers': [o.format()],
             'total_offers': 1
         }), 200
-
 
     @app.route('/offers/<int:offer_id>', methods=['PATCH'])
     @requires_auth('update:offers')
@@ -253,7 +247,7 @@ def create_app(test_config=None):
             o.panelists = [get_panelist(name=p) for p in body.get('panelists')]
         try:
             o.update()
-        except:
+        except Exception:
             abort(422, 'Database error: Update failed.')
 
         return jsonify({
@@ -261,7 +255,6 @@ def create_app(test_config=None):
             'message': 'Offer record has been updated successfully.',
             'id': offer_id
         }), 200
-
 
     @app.route('/offers/<int:offer_id>', methods=['DELETE'])
     @requires_auth('delete:offers')
@@ -272,7 +265,7 @@ def create_app(test_config=None):
 
         try:
             o.delete()
-        except:
+        except Exception:
             abort(422, 'Database error: Deletion failed.')
 
         return jsonify({
@@ -281,9 +274,9 @@ def create_app(test_config=None):
             'id': offer_id
         }), 200
 
-    #----------------------------------------------------------------------------#
+    # -------------------------------------------------------- #
     # Error Handlers
-    #----------------------------------------------------------------------------#
+    # -------------------------------------------------------- #
 
     @app.errorhandler(HTTPException)
     def http_exception_handler(error):
@@ -297,7 +290,6 @@ def create_app(test_config=None):
             'message': error.description
         }), error.code
 
-
     @app.errorhandler(AuthError)
     def auth_error(error):
         return jsonify({
@@ -305,7 +297,6 @@ def create_app(test_config=None):
             "error": error.status_code,
             "message": error.error['description']
         }), error.status_code
-
 
     @app.errorhandler(Exception)
     def exception_handler(error):
@@ -318,7 +309,6 @@ def create_app(test_config=None):
             'error': 500,
             'message': f'Something went wrong: {error}'
         }), 500
-
 
     return app
 

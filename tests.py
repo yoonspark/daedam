@@ -48,7 +48,9 @@ class DaedamTestCase(unittest.TestCase):
         # Make test data
         self.new_call = {
             'question': 'Does the universe have an end?',
-            'description': 'I want a blend of diverse perspectives including those from philosophy, science, and religion.',
+            'description':
+                'I want a blend of diverse perspectives including '
+                'those from philosophy, science, and religion.',
             'topics': ['philosophy', 'science', 'religion']
         }
         self.new_call_question_only = {
@@ -60,7 +62,12 @@ class DaedamTestCase(unittest.TestCase):
         }
         self.new_offer = {
             'title': 'How can love last long?',
-            'contents': 'Today, we observe increasing rates of divorce. Is lasting love just another social construct fabricated to sustain organized life? We shall discuss this timely question with three distinguished experts on love and relationship.',
+            'contents':
+                'Today, we observe increasing rates of divorce. '
+                'Is lasting love just another social construct fabricated '
+                'to sustain organized life? We shall discuss this timely '
+                'question with three distinguished experts on love and '
+                'relationship.',
             'event_time': '2021-05-25T19:00:00',
             'finalized': False,
             'topics': ['philosophy', 'science', 'love'],
@@ -70,7 +77,12 @@ class DaedamTestCase(unittest.TestCase):
             'title': 'Can love last forever?',
         }
         self.new_offer_no_title = {
-            'contents': 'Today, we observe increasing rates of divorce. Is lasting love just another social construct fabricated to sustain organized life? We shall discuss this timely question with three distinguished experts on love and relationship.',
+            'contents':
+                'Today, we observe increasing rates of divorce. '
+                'Is lasting love just another social construct fabricated '
+                'to sustain organized life? We shall discuss this timely '
+                'question with three distinguished experts on love and '
+                'relationship.',
             'event_time': '2021-05-25T19:00:00',
             'finalized': False,
             'topics': ['philosophy', 'science', 'love'],
@@ -80,9 +92,9 @@ class DaedamTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-    #----------------------------------------------------------------------------#
+    # -------------------------------------------------------- #
     # Calls
-    #----------------------------------------------------------------------------#
+    # -------------------------------------------------------- #
 
     # --- RETRIEVE ALL CALLS --- #
 
@@ -96,7 +108,10 @@ class DaedamTestCase(unittest.TestCase):
         self.assertIsInstance(data['total_calls'], int)
 
     def test_retrieve_calls_beyond_valid_page(self):
-        res = self.client().get('/calls?page=99999', headers=self.headers_audience)
+        res = self.client().get(
+            '/calls?page=99999',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -110,89 +125,150 @@ class DaedamTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     # --- CREATE NEW CALL --- #
 
     def test_create_call(self):
-        res = self.client().post('/calls', headers=self.headers_audience, json=self.new_call)
+        res = self.client().post(
+            '/calls',
+            headers=self.headers_audience,
+            json=self.new_call
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Call record has been created successfully.')
+        self.assertEqual(
+            data['message'],
+            'Call record has been created successfully.'
+        )
         self.assertIsInstance(data['id'], int)
 
         # For reproducibility of DB, delete the created record
-        _ = self.client().delete(f'/calls/{data["id"]}', headers=self.headers_audience)
+        _ = self.client().delete(
+            f'/calls/{data["id"]}',
+            headers=self.headers_audience
+        )
 
     def test_create_call_no_body(self):
-        res = self.client().post('/calls', headers=self.headers_audience)
+        res = self.client().post(
+            '/calls',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
-        # self.assertEqual(data['message'], 'Request body is missing.')
 
     def test_create_call_no_question(self):
-        res = self.client().post('/calls', headers=self.headers_audience, json=self.new_call_no_question)
+        res = self.client().post(
+            '/calls',
+            headers=self.headers_audience,
+            json=self.new_call_no_question
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], '"question" is required in the request body.')
+        self.assertEqual(
+            data['message'],
+            '"question" is required in the request body.'
+        )
 
     def test_create_call_question_only(self):
-        res = self.client().post('/calls', headers=self.headers_audience, json=self.new_call_question_only)
+        res = self.client().post(
+            '/calls',
+            headers=self.headers_audience,
+            json=self.new_call_question_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Call record has been created successfully.')
+        self.assertEqual(
+            data['message'],
+            'Call record has been created successfully.'
+        )
         self.assertIsInstance(data['id'], int)
 
         # For reproducibility of DB, delete the created record
-        _ = self.client().delete(f'/calls/{data["id"]}', headers=self.headers_audience)
+        _ = self.client().delete(
+            f'/calls/{data["id"]}',
+            headers=self.headers_audience
+        )
 
     def test_create_call_no_headers(self):
-        res = self.client().post('/calls', json=self.new_call)
+        res = self.client().post(
+            '/calls',
+            json=self.new_call
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     def test_create_call_wrong_permission(self):
-        res = self.client().post('/calls', headers=self.headers_moderator, json=self.new_call)
+        res = self.client().post(
+            '/calls',
+            headers=self.headers_moderator,
+            json=self.new_call
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Permission not found.')
+        self.assertEqual(
+            data['message'],
+            'Permission not found.'
+        )
 
     # --- DELETE CALL --- #
 
     def test_delete_call(self):
         # Create a test record
-        res = self.client().post('/calls', headers=self.headers_audience, json=self.new_call)
+        res = self.client().post(
+            '/calls',
+            headers=self.headers_audience,
+            json=self.new_call
+        )
         data = json.loads(res.data)
         call_id = data["id"]
 
-        res = self.client().delete(f'/calls/{call_id}', headers=self.headers_audience)
+        res = self.client().delete(
+            f'/calls/{call_id}',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Call record has been deleted successfully.')
         self.assertEqual(data['id'], call_id)
+        self.assertEqual(
+            data['message'],
+            'Call record has been deleted successfully.'
+        )
 
     def test_delete_call_not_exist(self):
-        res = self.client().delete('/calls/99999', headers=self.headers_audience)
+        res = self.client().delete(
+            '/calls/99999',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Call record does not exist.')
+        self.assertEqual(
+            data['message'],
+            'Call record does not exist.'
+        )
 
     def test_delete_call_no_headers(self):
         res = self.client().delete('/calls/3')
@@ -200,20 +276,32 @@ class DaedamTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     def test_delete_call_wrong_permission(self):
-        res = self.client().delete('/calls/3', headers=self.headers_moderator)
+        res = self.client().delete(
+            '/calls/3',
+            headers=self.headers_moderator
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Permission not found.')
+        self.assertEqual(
+            data['message'],
+            'Permission not found.'
+        )
 
     # --- RETRIEVE SINGLE CALL --- #
 
     def test_retrieve_call(self):
-        res = self.client().get('/calls/1', headers=self.headers_audience)
+        res = self.client().get(
+            '/calls/1',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -222,12 +310,18 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['total_calls'], 1)
 
     def test_retrieve_call_not_exist(self):
-        res = self.client().get('/calls/99999', headers=self.headers_audience)
+        res = self.client().get(
+            '/calls/99999',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Call record does not exist.')
+        self.assertEqual(
+            data['message'],
+            'Call record does not exist.'
+        )
 
     def test_retrieve_call_no_headers(self):
         res = self.client().get('/calls/1')
@@ -235,68 +329,110 @@ class DaedamTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     # --- UPDATE CALL --- #
 
     def test_update_call_question_only(self):
-        res = self.client().patch('/calls/1', headers=self.headers_audience, json=self.new_call_question_only)
+        res = self.client().patch(
+            '/calls/1',
+            headers=self.headers_audience,
+            json=self.new_call_question_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Call record has been updated successfully.')
         self.assertEqual(data['id'], 1)
+        self.assertEqual(
+            data['message'],
+            'Call record has been updated successfully.'
+        )
 
     def test_update_call_no_question(self):
-        res = self.client().patch('/calls/1', headers=self.headers_audience, json=self.new_call_no_question)
+        res = self.client().patch(
+            '/calls/1',
+            headers=self.headers_audience,
+            json=self.new_call_no_question
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Call record has been updated successfully.')
         self.assertEqual(data['id'], 1)
+        self.assertEqual(
+            data['message'],
+            'Call record has been updated successfully.'
+        )
 
     def test_update_call_no_body(self):
-        res = self.client().patch('/calls/1', headers=self.headers_audience)
+        res = self.client().patch(
+            '/calls/1',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
-        # self.assertEqual(data['message'], 'Request body is missing.')
 
     def test_update_call_not_exist(self):
-        res = self.client().patch('/calls/99999', headers=self.headers_audience, json=self.new_call_question_only)
+        res = self.client().patch(
+            '/calls/99999',
+            headers=self.headers_audience,
+            json=self.new_call_question_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Call record does not exist.')
+        self.assertEqual(
+            data['message'],
+            'Call record does not exist.'
+        )
 
     def test_update_call_no_headers(self):
-        res = self.client().patch('/calls/1', json=self.new_call_question_only)
+        res = self.client().patch(
+            '/calls/1',
+            json=self.new_call_question_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     def test_update_call_wrong_permission(self):
-        res = self.client().patch('/calls/1', headers=self.headers_moderator, json=self.new_call_question_only)
+        res = self.client().patch(
+            '/calls/1',
+            headers=self.headers_moderator,
+            json=self.new_call_question_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Permission not found.')
+        self.assertEqual(
+            data['message'],
+            'Permission not found.'
+        )
 
-    #----------------------------------------------------------------------------#
+    # -------------------------------------------------------- #
     # Offers
-    #----------------------------------------------------------------------------#
+    # -------------------------------------------------------- #
 
     # --- RETRIEVE ALL OFFERS --- #
 
     def test_retrieve_offers(self):
-        res = self.client().get('/offers', headers=self.headers_audience)
+        res = self.client().get(
+            '/offers',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -305,7 +441,10 @@ class DaedamTestCase(unittest.TestCase):
         self.assertIsInstance(data['total_offers'], int)
 
     def test_retrieve_offers_beyond_valid_page(self):
-        res = self.client().get('/offers?page=99999', headers=self.headers_audience)
+        res = self.client().get(
+            '/offers?page=99999',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -319,89 +458,150 @@ class DaedamTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     # --- CREATE NEW OFFER --- #
 
     def test_create_offer(self):
-        res = self.client().post('/offers', headers=self.headers_moderator, json=self.new_offer)
+        res = self.client().post(
+            '/offers',
+            headers=self.headers_moderator,
+            json=self.new_offer
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Offer record has been created successfully.')
         self.assertIsInstance(data['id'], int)
+        self.assertEqual(
+            data['message'],
+            'Offer record has been created successfully.'
+        )
 
         # For reproducibility of DB, delete the created record
-        _ = self.client().delete(f'/offers/{data["id"]}', headers=self.headers_moderator)
+        _ = self.client().delete(
+            f'/offers/{data["id"]}',
+            headers=self.headers_moderator
+        )
 
     def test_create_offer_no_body(self):
-        res = self.client().post('/offers', headers=self.headers_moderator)
+        res = self.client().post(
+            '/offers',
+            headers=self.headers_moderator
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
-        # self.assertEqual(data['message'], 'Request body is missing.')
 
     def test_create_offer_no_title(self):
-        res = self.client().post('/offers', headers=self.headers_moderator, json=self.new_offer_no_title)
+        res = self.client().post(
+            '/offers',
+            headers=self.headers_moderator,
+            json=self.new_offer_no_title
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], '"title" is required in the request body.')
+        self.assertEqual(
+            data['message'],
+            '"title" is required in the request body.'
+        )
 
     def test_create_offer_title_only(self):
-        res = self.client().post('/offers', headers=self.headers_moderator, json=self.new_offer_title_only)
+        res = self.client().post(
+            '/offers',
+            headers=self.headers_moderator,
+            json=self.new_offer_title_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 201)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Offer record has been created successfully.')
         self.assertIsInstance(data['id'], int)
+        self.assertEqual(
+            data['message'],
+            'Offer record has been created successfully.'
+        )
 
         # For reproducibility of DB, delete the created record
-        _ = self.client().delete(f'/offers/{data["id"]}', headers=self.headers_moderator)
+        _ = self.client().delete(
+            f'/offers/{data["id"]}',
+            headers=self.headers_moderator
+        )
 
     def test_create_offer_no_headers(self):
-        res = self.client().post('/offers', json=self.new_offer)
+        res = self.client().post(
+            '/offers',
+            json=self.new_offer
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     def test_create_offer_wrong_permission(self):
-        res = self.client().post('/offers', headers=self.headers_audience, json=self.new_offer)
+        res = self.client().post(
+            '/offers',
+            headers=self.headers_audience,
+            json=self.new_offer
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Permission not found.')
+        self.assertEqual(
+            ['message'],
+            'Permission not found.'
+        )
 
     # --- DELETE OFFER --- #
 
     def test_delete_offer(self):
         # Create a test record
-        res = self.client().post('/offers', headers=self.headers_moderator, json=self.new_offer)
+        res = self.client().post(
+            '/offers',
+            headers=self.headers_moderator,
+            json=self.new_offer
+        )
         data = json.loads(res.data)
         offer_id = data["id"]
 
-        res = self.client().delete(f'/offers/{offer_id}', headers=self.headers_moderator)
+        res = self.client().delete(
+            f'/offers/{offer_id}',
+            headers=self.headers_moderator
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Offer record has been deleted successfully.')
         self.assertEqual(data['id'], offer_id)
+        self.assertEqual(
+            data['message'],
+            'Offer record has been deleted successfully.'
+        )
 
     def test_delete_offer_not_exist(self):
-        res = self.client().delete('/offers/99999', headers=self.headers_moderator)
+        res = self.client().delete(
+            '/offers/99999',
+            headers=self.headers_moderator
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Offer record does not exist.')
+        self.assertEqual(
+            data['message'],
+            'Offer record does not exist.'
+        )
 
     def test_delete_offer_no_headers(self):
         res = self.client().delete('/offers/3')
@@ -409,20 +609,32 @@ class DaedamTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     def test_delete_offer_wrong_permission(self):
-        res = self.client().delete('/offers/3', headers=self.headers_audience)
+        res = self.client().delete(
+            '/offers/3',
+            headers=self.headers_audience
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Permission not found.')
+        self.assertEqual(
+            data['message'],
+            'Permission not found.'
+        )
 
     # --- RETRIEVE SINGLE OFFER --- #
 
     def test_retrieve_offer(self):
-        res = self.client().get('/offers/1', headers=self.headers_moderator)
+        res = self.client().get(
+            '/offers/1',
+            headers=self.headers_moderator
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -431,12 +643,18 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(data['total_offers'], 1)
 
     def test_retrieve_offer_not_exist(self):
-        res = self.client().get('/offers/99999', headers=self.headers_moderator)
+        res = self.client().get(
+            '/offers/99999',
+            headers=self.headers_moderator
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Offer record does not exist.')
+        self.assertEqual(
+            data['message'],
+            'Offer record does not exist.'
+        )
 
     def test_retrieve_offer_no_headers(self):
         res = self.client().get('/offers/1')
@@ -444,59 +662,98 @@ class DaedamTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     # --- UPDATE OFFER --- #
 
     def test_update_offer_title_only(self):
-        res = self.client().patch('/offers/1', headers=self.headers_moderator, json=self.new_offer_title_only)
+        res = self.client().patch(
+            '/offers/1',
+            headers=self.headers_moderator,
+            json=self.new_offer_title_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Offer record has been updated successfully.')
         self.assertEqual(data['id'], 1)
+        self.assertEqual(
+            data['message'],
+            'Offer record has been updated successfully.'
+        )
 
     def test_update_offer_no_title(self):
-        res = self.client().patch('/offers/1', headers=self.headers_moderator, json=self.new_offer_no_title)
+        res = self.client().patch(
+            '/offers/1',
+            headers=self.headers_moderator,
+            json=self.new_offer_no_title
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(data['message'], 'Offer record has been updated successfully.')
         self.assertEqual(data['id'], 1)
+        self.assertEqual(
+            data['message'],
+            'Offer record has been updated successfully.'
+        )
 
     def test_update_offer_no_body(self):
-        res = self.client().patch('/offers/1', headers=self.headers_moderator)
+        res = self.client().patch(
+            '/offers/1',
+            headers=self.headers_moderator
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data['success'], False)
-        # self.assertEqual(data['message'], 'Request body is missing.')
 
     def test_update_offer_not_exist(self):
-        res = self.client().patch('/offers/99999', headers=self.headers_moderator, json=self.new_offer_title_only)
+        res = self.client().patch(
+            '/offers/99999',
+            headers=self.headers_moderator,
+            json=self.new_offer_title_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Offer record does not exist.')
+        self.assertEqual(
+            data['message'],
+            'Offer record does not exist.'
+        )
 
     def test_update_offer_no_headers(self):
-        res = self.client().patch('/offers/1', json=self.new_offer_title_only)
+        res = self.client().patch(
+            '/offers/1',
+            json=self.new_offer_title_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Authorization header is expected.')
+        self.assertEqual(
+            data['message'],
+            'Authorization header is expected.'
+        )
 
     def test_update_offer_wrong_permission(self):
-        res = self.client().patch('/offers/1', headers=self.headers_audience, json=self.new_offer_title_only)
+        res = self.client().patch(
+            '/offers/1',
+            headers=self.headers_audience,
+            json=self.new_offer_title_only
+        )
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'], 'Permission not found.')
+        self.assertEqual(
+            data['message'],
+            'Permission not found.'
+        )
 
 
 # Make the tests conveniently executable

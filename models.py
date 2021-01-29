@@ -21,26 +21,72 @@ def setup_db(app, db_url=DATABASE_URL):
 
 
 # Create association tables
-offer_panelist = db.Table('offer_panelist',
-    db.Column('offer_id', db.Integer, db.ForeignKey('Offer.id'), primary_key=True),
-    db.Column('panelist_id', db.Integer, db.ForeignKey('Panelist.id'), primary_key=True),
+offer_panelist = db.Table(
+    'offer_panelist',
+    db.Column(
+        'offer_id',
+        db.Integer,
+        db.ForeignKey('Offer.id'),
+        primary_key=True
+    ),
+    db.Column(
+        'panelist_id',
+        db.Integer,
+        db.ForeignKey('Panelist.id'),
+        primary_key=True
+    )
 )
-call_topic = db.Table('call_topic',
-    db.Column('call_id', db.Integer, db.ForeignKey('Call.id'), primary_key=True),
-    db.Column('topic_id', db.Integer, db.ForeignKey('Topic.id'), primary_key=True),
+call_topic = db.Table(
+    'call_topic',
+    db.Column(
+        'call_id',
+        db.Integer,
+        db.ForeignKey('Call.id'),
+        primary_key=True
+    ),
+    db.Column(
+        'topic_id',
+        db.Integer,
+        db.ForeignKey('Topic.id'),
+        primary_key=True
+    )
 )
-offer_topic = db.Table('offer_topic',
-    db.Column('offer_id', db.Integer, db.ForeignKey('Offer.id'), primary_key=True),
-    db.Column('topic_id', db.Integer, db.ForeignKey('Topic.id'), primary_key=True),
+offer_topic = db.Table(
+    'offer_topic',
+    db.Column(
+        'offer_id',
+        db.Integer,
+        db.ForeignKey('Offer.id'),
+        primary_key=True
+    ),
+    db.Column(
+        'topic_id',
+        db.Integer,
+        db.ForeignKey('Topic.id'),
+        primary_key=True
+    )
 )
-panelist_topic = db.Table('panelist_topic',
-    db.Column('panelist_id', db.Integer, db.ForeignKey('Panelist.id'), primary_key=True),
-    db.Column('topic_id', db.Integer, db.ForeignKey('Topic.id'), primary_key=True),
+panelist_topic = db.Table(
+    'panelist_topic',
+    db.Column(
+        'panelist_id',
+        db.Integer,
+        db.ForeignKey('Panelist.id'),
+        primary_key=True
+    ),
+    db.Column(
+        'topic_id',
+        db.Integer,
+        db.ForeignKey('Topic.id'),
+        primary_key=True
+    )
 )
 
 
 class Call(db.Model):
-    """Audience's individual request for desired discussion contents"""
+    """
+    Audience's individual request for desired discussion contents.
+    """
 
     __tablename__ = 'Call'
 
@@ -73,7 +119,10 @@ class Call(db.Model):
 
 
 class Offer(db.Model):
-    """Organized (discussion) event based on moderators’ synthesis of audience requests"""
+    """
+    Organized (discussion) event based on moderators’
+    synthesis of audience requests.
+    """
 
     __tablename__ = 'Offer'
 
@@ -111,7 +160,9 @@ class Offer(db.Model):
 
 
 class Panelist(db.Model):
-    """Panelist with distinctive experience/expertise"""
+    """
+    Panelist with distinctive experience/expertise.
+    """
 
     __tablename__ = 'Panelist'
 
@@ -126,7 +177,12 @@ class Panelist(db.Model):
     website = db.Column(db.String(120))
 
     # Specify relational field(s)
-    offers = db.relationship('Offer', secondary=offer_panelist, backref='panelists', lazy=True)
+    offers = db.relationship(
+        'Offer',
+        secondary=offer_panelist,
+        backref='panelists',
+        lazy=True
+    )
 
     def __repr__(self):
         return f'<Panelist ID: {self.id}, name: {self.name}>'
@@ -157,7 +213,9 @@ class Panelist(db.Model):
 
 
 class Topic(db.Model):
-    """Discussion topic categories"""
+    """
+    Discussion topic categories.
+    """
 
     __tablename__ = 'Topic'
 
@@ -167,9 +225,24 @@ class Topic(db.Model):
     db.UniqueConstraint(name)
 
     # Specify relational field(s)
-    calls = db.relationship('Call', secondary=call_topic, backref='topics', lazy=True)
-    offers = db.relationship('Offer', secondary=offer_topic, backref='topics', lazy=True)
-    panelists = db.relationship('Panelist', secondary=panelist_topic, backref='topics', lazy=True)
+    calls = db.relationship(
+        'Call',
+        secondary=call_topic,
+        backref='topics',
+        lazy=True
+    )
+    offers = db.relationship(
+        'Offer',
+        secondary=offer_topic,
+        backref='topics',
+        lazy=True
+    )
+    panelists = db.relationship(
+        'Panelist',
+        secondary=panelist_topic,
+        backref='topics',
+        lazy=True
+    )
 
     def __repr__(self):
         return f'<Topic ID: {self.id}, name: {self.name}>'
