@@ -1,0 +1,515 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 13.1
+-- Dumped by pg_dump version 13.1
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: Call; Type: TABLE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE TABLE public."Call" (
+    id integer NOT NULL,
+    question character varying(1000),
+    description character varying
+);
+
+
+ALTER TABLE public."Call" OWNER TO sangyoonpark;
+
+--
+-- Name: Call_id_seq; Type: SEQUENCE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE SEQUENCE public."Call_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Call_id_seq" OWNER TO sangyoonpark;
+
+--
+-- Name: Call_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sangyoonpark
+--
+
+ALTER SEQUENCE public."Call_id_seq" OWNED BY public."Call".id;
+
+
+--
+-- Name: Offer; Type: TABLE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE TABLE public."Offer" (
+    id integer NOT NULL,
+    title character varying(300),
+    contents character varying,
+    event_time timestamp without time zone,
+    finalized boolean
+);
+
+
+ALTER TABLE public."Offer" OWNER TO sangyoonpark;
+
+--
+-- Name: Offer_id_seq; Type: SEQUENCE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE SEQUENCE public."Offer_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Offer_id_seq" OWNER TO sangyoonpark;
+
+--
+-- Name: Offer_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sangyoonpark
+--
+
+ALTER SEQUENCE public."Offer_id_seq" OWNED BY public."Offer".id;
+
+
+--
+-- Name: Panelist; Type: TABLE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE TABLE public."Panelist" (
+    id integer NOT NULL,
+    name character varying,
+    city character varying(120),
+    state character varying(120),
+    phone character varying(120),
+    image_link character varying(500),
+    facebook_link character varying(120),
+    website character varying(120)
+);
+
+
+ALTER TABLE public."Panelist" OWNER TO sangyoonpark;
+
+--
+-- Name: Panelist_id_seq; Type: SEQUENCE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE SEQUENCE public."Panelist_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Panelist_id_seq" OWNER TO sangyoonpark;
+
+--
+-- Name: Panelist_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sangyoonpark
+--
+
+ALTER SEQUENCE public."Panelist_id_seq" OWNED BY public."Panelist".id;
+
+
+--
+-- Name: Topic; Type: TABLE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE TABLE public."Topic" (
+    id integer NOT NULL,
+    name character varying(50)
+);
+
+
+ALTER TABLE public."Topic" OWNER TO sangyoonpark;
+
+--
+-- Name: Topic_id_seq; Type: SEQUENCE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE SEQUENCE public."Topic_id_seq"
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public."Topic_id_seq" OWNER TO sangyoonpark;
+
+--
+-- Name: Topic_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: sangyoonpark
+--
+
+ALTER SEQUENCE public."Topic_id_seq" OWNED BY public."Topic".id;
+
+
+--
+-- Name: call_topic; Type: TABLE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE TABLE public.call_topic (
+    call_id integer NOT NULL,
+    topic_id integer NOT NULL
+);
+
+
+ALTER TABLE public.call_topic OWNER TO sangyoonpark;
+
+--
+-- Name: offer_panelist; Type: TABLE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE TABLE public.offer_panelist (
+    offer_id integer NOT NULL,
+    panelist_id integer NOT NULL
+);
+
+
+ALTER TABLE public.offer_panelist OWNER TO sangyoonpark;
+
+--
+-- Name: offer_topic; Type: TABLE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE TABLE public.offer_topic (
+    offer_id integer NOT NULL,
+    topic_id integer NOT NULL
+);
+
+
+ALTER TABLE public.offer_topic OWNER TO sangyoonpark;
+
+--
+-- Name: panelist_topic; Type: TABLE; Schema: public; Owner: sangyoonpark
+--
+
+CREATE TABLE public.panelist_topic (
+    panelist_id integer NOT NULL,
+    topic_id integer NOT NULL
+);
+
+
+ALTER TABLE public.panelist_topic OWNER TO sangyoonpark;
+
+--
+-- Name: Call id; Type: DEFAULT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Call" ALTER COLUMN id SET DEFAULT nextval('public."Call_id_seq"'::regclass);
+
+
+--
+-- Name: Offer id; Type: DEFAULT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Offer" ALTER COLUMN id SET DEFAULT nextval('public."Offer_id_seq"'::regclass);
+
+
+--
+-- Name: Panelist id; Type: DEFAULT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Panelist" ALTER COLUMN id SET DEFAULT nextval('public."Panelist_id_seq"'::regclass);
+
+
+--
+-- Name: Topic id; Type: DEFAULT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Topic" ALTER COLUMN id SET DEFAULT nextval('public."Topic_id_seq"'::regclass);
+
+
+--
+-- Data for Name: Call; Type: TABLE DATA; Schema: public; Owner: sangyoonpark
+--
+
+COPY public."Call" (id, question, description) FROM stdin;
+1	Is violence unavoidable?	I want a blend of diverse perspectives including those from philosophy, science, and religion.
+2	Is a happy marriage possible? If so, how?	Would prefer empirical and scientific perspectives.
+3	Will democracy survive the 21st century?	I would like in-depth discussion of strengths and weaknesses of modern democracy, plus its alternatives in future.
+\.
+
+
+--
+-- Data for Name: Offer; Type: TABLE DATA; Schema: public; Owner: sangyoonpark
+--
+
+COPY public."Offer" (id, title, contents, event_time, finalized) FROM stdin;
+1	How can love last long?	Today, we observe increasing rates of divorce. Is lasting love just another social construct fabricated to sustain organized life? We shall discuss this timely question with three distinguished experts on love and relationship.	2021-05-25 19:00:00	f
+\.
+
+
+--
+-- Data for Name: Panelist; Type: TABLE DATA; Schema: public; Owner: sangyoonpark
+--
+
+COPY public."Panelist" (id, name, city, state, phone, image_link, facebook_link, website) FROM stdin;
+1	Adam Sheck	\N	\N	\N	\N	\N	\N
+2	Todd Creager	\N	\N	\N	\N	\N	\N
+3	April Masini	\N	\N	\N	\N	\N	\N
+\.
+
+
+--
+-- Data for Name: Topic; Type: TABLE DATA; Schema: public; Owner: sangyoonpark
+--
+
+COPY public."Topic" (id, name) FROM stdin;
+1	philosophy
+2	psychology
+3	sociology
+4	biology
+5	religion
+6	relationship
+7	marriage
+8	political science
+9	government
+10	democracy
+11	science
+12	love
+\.
+
+
+--
+-- Data for Name: call_topic; Type: TABLE DATA; Schema: public; Owner: sangyoonpark
+--
+
+COPY public.call_topic (call_id, topic_id) FROM stdin;
+1	1
+1	2
+1	3
+1	4
+1	5
+2	2
+2	4
+2	6
+2	7
+3	1
+3	3
+3	8
+3	9
+3	10
+\.
+
+
+--
+-- Data for Name: offer_panelist; Type: TABLE DATA; Schema: public; Owner: sangyoonpark
+--
+
+COPY public.offer_panelist (offer_id, panelist_id) FROM stdin;
+1	2
+1	1
+1	3
+\.
+
+
+--
+-- Data for Name: offer_topic; Type: TABLE DATA; Schema: public; Owner: sangyoonpark
+--
+
+COPY public.offer_topic (offer_id, topic_id) FROM stdin;
+1	11
+1	12
+1	1
+\.
+
+
+--
+-- Data for Name: panelist_topic; Type: TABLE DATA; Schema: public; Owner: sangyoonpark
+--
+
+COPY public.panelist_topic (panelist_id, topic_id) FROM stdin;
+\.
+
+
+--
+-- Name: Call_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sangyoonpark
+--
+
+SELECT pg_catalog.setval('public."Call_id_seq"', 3, true);
+
+
+--
+-- Name: Offer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sangyoonpark
+--
+
+SELECT pg_catalog.setval('public."Offer_id_seq"', 1, true);
+
+
+--
+-- Name: Panelist_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sangyoonpark
+--
+
+SELECT pg_catalog.setval('public."Panelist_id_seq"', 3, true);
+
+
+--
+-- Name: Topic_id_seq; Type: SEQUENCE SET; Schema: public; Owner: sangyoonpark
+--
+
+SELECT pg_catalog.setval('public."Topic_id_seq"', 12, true);
+
+
+--
+-- Name: Call Call_pkey; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Call"
+    ADD CONSTRAINT "Call_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Offer Offer_pkey; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Offer"
+    ADD CONSTRAINT "Offer_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Panelist Panelist_pkey; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Panelist"
+    ADD CONSTRAINT "Panelist_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Topic Topic_name_key; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Topic"
+    ADD CONSTRAINT "Topic_name_key" UNIQUE (name);
+
+
+--
+-- Name: Topic Topic_pkey; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public."Topic"
+    ADD CONSTRAINT "Topic_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: call_topic call_topic_pkey; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.call_topic
+    ADD CONSTRAINT call_topic_pkey PRIMARY KEY (call_id, topic_id);
+
+
+--
+-- Name: offer_panelist offer_panelist_pkey; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.offer_panelist
+    ADD CONSTRAINT offer_panelist_pkey PRIMARY KEY (offer_id, panelist_id);
+
+
+--
+-- Name: offer_topic offer_topic_pkey; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.offer_topic
+    ADD CONSTRAINT offer_topic_pkey PRIMARY KEY (offer_id, topic_id);
+
+
+--
+-- Name: panelist_topic panelist_topic_pkey; Type: CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.panelist_topic
+    ADD CONSTRAINT panelist_topic_pkey PRIMARY KEY (panelist_id, topic_id);
+
+
+--
+-- Name: call_topic call_topic_call_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.call_topic
+    ADD CONSTRAINT call_topic_call_id_fkey FOREIGN KEY (call_id) REFERENCES public."Call"(id);
+
+
+--
+-- Name: call_topic call_topic_topic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.call_topic
+    ADD CONSTRAINT call_topic_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES public."Topic"(id);
+
+
+--
+-- Name: offer_panelist offer_panelist_offer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.offer_panelist
+    ADD CONSTRAINT offer_panelist_offer_id_fkey FOREIGN KEY (offer_id) REFERENCES public."Offer"(id);
+
+
+--
+-- Name: offer_panelist offer_panelist_panelist_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.offer_panelist
+    ADD CONSTRAINT offer_panelist_panelist_id_fkey FOREIGN KEY (panelist_id) REFERENCES public."Panelist"(id);
+
+
+--
+-- Name: offer_topic offer_topic_offer_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.offer_topic
+    ADD CONSTRAINT offer_topic_offer_id_fkey FOREIGN KEY (offer_id) REFERENCES public."Offer"(id);
+
+
+--
+-- Name: offer_topic offer_topic_topic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.offer_topic
+    ADD CONSTRAINT offer_topic_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES public."Topic"(id);
+
+
+--
+-- Name: panelist_topic panelist_topic_panelist_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.panelist_topic
+    ADD CONSTRAINT panelist_topic_panelist_id_fkey FOREIGN KEY (panelist_id) REFERENCES public."Panelist"(id);
+
+
+--
+-- Name: panelist_topic panelist_topic_topic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: sangyoonpark
+--
+
+ALTER TABLE ONLY public.panelist_topic
+    ADD CONSTRAINT panelist_topic_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES public."Topic"(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
