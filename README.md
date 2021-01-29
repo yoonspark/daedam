@@ -1,5 +1,7 @@
 # Daedam
 
+## Overview
+
 Daedam is a web platform that helps the audience initiate and organize public intellectual discussions.
 
 The application serves three types of users:
@@ -10,11 +12,17 @@ The application serves three types of users:
 
 Note that audience can only read `offers` while a moderator can only read `calls`.
 
-## Getting Started
+## Deployment
 
-The application has been deployed to Heroku at [https://daedam.herokuapp.com](https://daedam.herokuapp.com),
-so you can interact with it over the network. API documentation can be found [here](./apidoc.md).
-You can also test it locally with the following steps.
+The application has been deployed to Heroku at [https://daedam.herokuapp.com](https://daedam.herokuapp.com).
+
+## API Reference
+
+Documentation of supported endpoints and their details can be found [here](./apidoc.md).
+
+## Local Hosting
+
+You can also host the application locally with the following steps.
 
 ### 1. Installing Dependencies
 
