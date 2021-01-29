@@ -65,18 +65,7 @@ $ export DATABASE_URL=postgres://localhost:5432/daedam
 ```
 where you need to put your system's valid user in `[username]`.
 
-### 3. Running the Server
-
-Finally, you can launch the backend server:
-```
-$ export FLASK_APP=app.py
-$ export FLASK_ENV=development
-$ flask run
-```
-
-For successful launch, make sure that the virtual environment has been activated.
-
-### 4. Configuring Access Credentials
+### 3. Configuring Access Credentials
 
 The application serves three user types, each with a different set of permissions.
 For successful interaction with the API, you need to set the access credentials.
@@ -87,6 +76,17 @@ $ export JWT_MODERATOR=[token]
 $ export JWT_ADMIN=[token]
 ```
 where you need to put an appropriate (provided/obtained) JavaScript Web Token in `[token]`.
+
+### 4. Running the Server
+
+Finally, you can launch the backend server:
+```
+$ export FLASK_APP=app.py
+$ export FLASK_ENV=development
+$ flask run
+```
+
+For successful launch, make sure that the virtual environment has been activated.
 
 ### 5. Testing
 
