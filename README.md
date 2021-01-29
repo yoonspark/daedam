@@ -2,7 +2,7 @@
 
 ## Overview
 
-Daedam is a web platform that helps the audience initiate and organize public intellectual discussions.
+With the advent of new communication technologies such as YouTube, we are observing a pleasantly surprising trend: the public enjoys and demands deep intellectual discussions. Although it is true that these technologies often tap into more primitive parts of our psychology, they have also revealed existence of the other side, i.e. needs for thoughtful reflection and conversation. Daedam intends to fulfill these largely unmet cognitive needs by helping the audience initiate and organize public intellectual discussions around *their* burning questions in life.
 
 The application serves three types of users:
 
