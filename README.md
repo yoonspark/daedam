@@ -61,28 +61,20 @@ Once the virtual environment is activated, restore the PostgreSQL database to co
 ```
 $ createdb daedam
 $ psql -d daedam -U [username] -a -f daedam.psql
-$ export DATABASE_URL=postgres://localhost:5432/daedam
 ```
 where you need to put your system's valid user in `[username]`.
 
-### 3. Configuring Access Credentials
+### 3. Configuring Environment Variables
 
-The application serves three user types, each with a different set of permissions.
-For successful interaction with the API, you need to set the access credentials.
-Specifically, set environment variables:
+Next, you can set environment variables:
 ```
-$ export JWT_AUDIENCE=[token]
-$ export JWT_MODERATOR=[token]
-$ export JWT_ADMIN=[token]
+$ source setup.sh
 ```
-where you need to put an appropriate (provided/obtained) JavaScript Web Token in `[token]`.
 
 ### 4. Running the Server
 
 Finally, you can launch the backend server:
 ```
-$ export FLASK_APP=app.py
-$ export FLASK_ENV=development
 $ flask run
 ```
 
