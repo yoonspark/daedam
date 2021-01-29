@@ -559,7 +559,7 @@ class DaedamTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 401)
         self.assertEqual(data['success'], False)
         self.assertEqual(
-            ['message'],
+            data['message'],
             'Permission not found.'
         )
 
